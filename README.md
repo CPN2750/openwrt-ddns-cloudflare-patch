@@ -3,7 +3,7 @@ README.md
 
 ## 📖 Project Purpose 專案目的
 + English:
-OpenWrt’s ddns-scripts originally detect registered IP via DNS query. When using Cloudflare with Proxy (orange cloud) enabled, DNS queries return Cloudflare edge node IPs instead of the backend registered IP.
+  OpenWrt’s ddns-scripts originally detect registered IP via DNS query. When using Cloudflare with Proxy (orange cloud) enabled, DNS queries return Cloudflare edge node IPs instead of the backend registered IP.
 This causes ddns-scripts to misjudge and force update every cycle.
 This patch modifies get_registered_ip() in dynamic_dns_functions.sh to directly call the Cloudflare API, retrieving the registered IP from Cloudflare backend records.
 + 中文:
