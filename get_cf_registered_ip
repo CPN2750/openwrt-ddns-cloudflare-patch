@@ -1,0 +1,50 @@
+
+    # Get registered ip from Cloudflare patch start
+    if [ "$service_name" = "cloudflare.com-v4" ] || [ "$service_name" = "cloudflare.com-v6" ]; then
+        local __DATFILE __ERRFILE __ZONEID __DATA __TYPE __HOST __DOMAIN CF_IP
+
+        __HOST=$(printf %s "$domain" | cut -d@ -f1)
+        __DOMAIN=$(printf %s "$domain" | cut -d@ -f2)
+        [ -z "$__HOST" ] && __HOST=$__DOMAIN
+        [ "$__HOST" != "$__DOMAIN" ] && __HOST="${__HOST}.${__DOMAIN}"
+
+        [ $use_ipv6 -eq 0 ] && __TYPE="A" || __TYPE="AAAA"
+
+        __DATFILE="/var/run/ddns/${SECTION}_cf.dat"
+        __ERRFILE="/var/run/ddns/${SECTION}_cf.err"
+
+        __PRGBASE="$CURL -s --stderr $__ERRFILE -o $__DATFILE"
+        if [ "$username" = "Bearer" ]; then
+            __PRGBASE="$__PRGBASE --header 'Authorization: Bearer $password'"
+        else
+            __PRGBASE="$__PRGBASE --header 'X-Auth-Email: $username' --header 'X-Auth-Key: $password'"
+        fi
+        __PRGBASE="$__PRGBASE --header 'Content-Type: application/json'"
+
+        # Get zone id
+        eval "$__PRGBASE 'https://api.cloudflare.com/client/v4/zones?name=$__DOMAIN'"
+        __ZONEID=$(grep -o '"id":\s*"[^"]*' $__DATFILE | grep -o '[^"]*$' | head -1)
+
+        # Get DNS Record
+        eval "$__PRGBASE 'https://api.cloudflare.com/client/v4/zones/$__ZONEID/dns_records?name=$__HOST&type=$__TYPE'"
+        __DATA=$(grep -o '"content":\s*"[^"]*' $__DATFILE | grep -o '[^"]*$' | head -1)
+
+        if [ $use_ipv6 -eq 0 ]; then
+            CF_IP=$(printf "%s" "$__DATA" | grep -m 1 -o "$IPV4_REGEX")
+        else
+            CF_IP=$(printf "%s" "$__DATA" | grep -m 1 -o "$IPV6_REGEX")
+        fi
+
+        if [ -n "$CF_IP" ]; then
+            eval "$1=\"$CF_IP\""
+            [ -z "$IPFILE" ] || echo "$CF_IP" > "$IPFILE"
+            write_log 7 "Cloudflare Registered IP '$CF_IP' detected"
+            return 0
+        else
+            [ -z "$IPFILE" ] || echo "" > "$IPFILE"
+            write_log 4 "Cloudflare Registered IP not found"
+            return 127
+        fi
+    fi
+    # Patch end
+
