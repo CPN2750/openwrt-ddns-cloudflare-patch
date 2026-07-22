@@ -2,14 +2,14 @@ README.md
 # OpenWRT ddns-scripts Cloudflare Detect Registered IP Patch  
 
 ## 📖 Project Purpose 專案目的
-+ English:
-  OpenWrt’s ddns-scripts originally detect registered IP via DNS query. When using Cloudflare with Proxy (orange cloud) enabled, DNS queries return Cloudflare edge node IPs instead of the backend registered IP.
-This causes ddns-scripts to misjudge and force update every cycle.
-This patch modifies get_registered_ip() in dynamic_dns_functions.sh to directly call the Cloudflare API, retrieving the registered IP from Cloudflare backend records.
-+ 中文:
-	OpenWrt 的 `ddns-scripts` 原本透過 DNS 查詢來判斷已註冊的 IP。但在使用 **Cloudflare** 並開啟 Proxy（橘色雲）時，DNS 查詢會回傳 Cloudflare 邊緣節點 IP，而不是 Cloudflare 後台登記的紀錄。  
-	這會導致 ddns-scripts 誤判，認為已註冊 IP 與 WAN IP 不一致，結果就是 **每次檢查都需要強制更新 (force update)**。  
-	此修補程式在 `dynamic_dns_functions.sh` 中的 `get_registered_ip()` 功能函數中添加一段功能，直接呼叫 **Cloudflare API**，從「Cloudflare 後台紀錄」取得已登記的IP。
++ English:  
+OpenWrt’s ddns-scripts originally detect registered IP via DNS query.When using Cloudflare with Proxy (orange cloud) enabled, DNS queries return Cloudflare edge node IPs instead of the backend registered IP.
+This causes ddns-scripts to misjudge and force update every cycle.  
+This patch modifies get_registered_ip() in dynamic_dns_functions.sh to directly call the Cloudflare API, retrieving the registered IP from Cloudflare backend records.  
+	
++ 中文:  
+OpenWrt 的 `ddns-scripts` 原本透過 DNS 查詢來判斷已註冊的 IP。但在使用 **Cloudflare** 並開啟 Proxy（橘色雲）時，DNS 查詢會回傳 Cloudflare 邊緣節點 IP，而不是 Cloudflare 後台登記的紀錄。這會導致 ddns-scripts 誤判，認為已註冊 IP 與 WAN IP 不一致，結果就是 **每次檢查都需要強制更新 (force update)**。  
+此修補程式在 `dynamic_dns_functions.sh` 中的 `get_registered_ip()` 功能函數中添加一段功能，直接呼叫 **Cloudflare API**，從「Cloudflare 後台紀錄」取得已登記的IP。
 
 ---
 
