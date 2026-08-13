@@ -2,6 +2,7 @@ README.md
 # OpenWRT ddns-scripts Cloudflare Detect Registered IP Patch  
 ## 2026-08-10
 新版本 ddns-scripts-cloudflare >=2.8.3-r5 已包含此功能。
+
 The new version ddns-scripts-cloudflare >=2.8.3-r5 already includes this feature.
 ## 📖 Project Purpose 專案目的
 + English:  
